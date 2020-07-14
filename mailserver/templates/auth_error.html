@@ -1,0 +1,13 @@
+{% extends "customer/navbar.html" %} {% block head_title %}Outlook Auth Error{% endblock %} {% block main %}
+
+
+<div class="container">
+    <div class="mt-5 col-8 mx-auto">
+        <h2>Login Failure</h2>
+        <p>{{ result.error }}</p>
+        <p>{{ result.error_description }}</p>
+    </div>
+
+</div>
+
+{% endblock %}

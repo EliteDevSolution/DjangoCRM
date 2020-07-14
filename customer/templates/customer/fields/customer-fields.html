@@ -1,0 +1,117 @@
+<div class="d-none">
+    <input type="number" name="pk" value="{{ customer.pk }}">
+</div>
+{% if options.user_created_enabled %}
+    <div class="form-group row">
+        <label for="created_date" class="col-lg-12 col-form-label">Creation Date</label>
+        <div class="col-lg-12">
+            <input type="text" class="form-control" value="{{ customer.created_date }}" readonly>
+        </div>
+    </div>
+{% endif %}
+<div class="row">
+    <div class="form-group col-lg-6 col-form-label">
+        <label for="leads-from" class="col-lg-12 col-form-label">From</label>
+        <div class="col-lg-12">
+            <select id="leads-from" name="leads_from" class="form-control"
+                    {% if required_fields.customer_fields.from %}required="required"{% endif %}>
+                <option value="">Select...</option>
+                {% for lead in leads %}
+                    <option value="{{ lead.id }}"
+                            {% if lead.id == customer.leads_from_id %}selected="selected"{% endif %}>{{ lead.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+
+
+    <div class="form-group col-lg-6 col-form-label">
+        <label for="sales-person" class="col-lg-12 col-form-label">Assign</label>
+        <div class="col-lg-12">
+            <select id="sales-person" name="sales_person" class="form-control"
+                    {% if required_fields.customer_fields.assign %}required="required"{% endif %}>
+                <option value="">Select...</option>
+                {% for sales_person in sales_people %}
+                    <option value="{{ sales_person.id }}"
+                            {% if sales_person.id == customer.sales_person_id %}selected="selected"{% endif %}>{{ sales_person.username }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="form-group col-lg-4 col-form-label">
+        <label for="customer-name" class="col-lg-12 col-form-label">Customer Name</label>
+        <div class="col-lg-12">
+            <input type="text" class="form-control" id="customer-name" name="customer_name"
+                   value="{{ customer.customer_name }}" placeholder="Enter customer name"
+                   {% if required_fields.customer_fields.customer_name %}required="required"{% endif %}>
+        </div>
+    </div>
+
+    <div class="form-group col-lg-4 col-form-label">
+        <label for="phone-number" class="col-lg-12 col-form-label">Phone Number</label>
+        <div class="col-lg-12">
+            <input type="text" class="form-control" id="phone-number" name="phone_number" pattern="^[0-9]*$"
+                   value="{{ customer.phone_number|default:'' }}" placeholder="Enter a phone number"
+                   {% if required_fields.customer_fields.phone_number %}required="required"{% endif %}>
+        </div>
+    </div>
+
+
+    <div class="form-group col-lg-4 col-form-label">
+        <label for="customer-email" class="col-lg-12 col-form-label">Customer Email</label>
+        <div class="col-lg-12">
+            <input type="email" class="form-control" id="customer-email" name="customer_email"
+                   value="{{ customer.customer_email|default:'' }}" placeholder="Enter email address"
+                   {% if required_fields.customer_fields.customer_email %}required="required"{% endif %}>
+        </div>
+    </div>
+
+</div>
+
+<div class="row">
+    <div class="form-group col-lg-4 col-form-label">
+        <label for="customer-address" class="col-lg-12 col-form-label">Customer Address</label>
+        <div class="col-lg-12">
+            <input type="text" class="form-control" id="customer-address" name="customer_address"
+                   value="{{ customer.customer_address|default:'' }}" placeholder="Enter customer address"
+                   {% if required_fields.customer_fields.customer_address %}required="required"{% endif %}>
+        </div>
+    </div>
+
+
+    <div class="form-group col-lg-4 col-form-label">
+        <label for="date-signed" class="col-lg-12 col-form-label">Date signed</label>
+        <div class="col-lg-12">
+            <input type="text" class="form-control" id="date-signed" name="date_signed"
+                   value="{{ customer.date_signed|date:'d/m/Y' }}" placeholder="dd/mm/yyyy" data-provide="datepicker"
+                   data-date-format="dd/mm/yyyy" data-date-autoclose="true" data-date-today-btn="linked"
+                   data-date-clear-btn="true"
+                   {% if required_fields.customer_fields.date_signed %}required="required"{% endif %}>
+        </div>
+    </div>
+
+    <div class="form-group col-lg-4 col-form-label">
+        <label for="agm" class="col-lg-12 col-form-label">AGM</label>
+        <div class="col-lg-12">
+            <input type="text" class="form-control" id="agm" name="agm" placeholder="Enter AGM"
+                   value="{{ customer.agm|default:'' }}"
+                   {% if required_fields.customer_fields.agm %}required="required"{% endif %}>
+        </div>
+    </div>
+
+</div>
+
+<div class="row">
+<div class="form-group col-lg-12 col-form-label">
+    <label for="notes" class="col-lg-12 col-form-label">Notes</label>
+    <div class="col-lg-12">
+        <textarea class="form-control" id="customer-notes" name="customer_notes" placeholder="Enter customer notes"
+                  rows="3"
+                  {% if required_fields.customer_fields.customer_notes %}required="required"{% endif %}>{{ customer.customer_notes|default:"" }}</textarea>
+    </div>
+</div>
+</div>

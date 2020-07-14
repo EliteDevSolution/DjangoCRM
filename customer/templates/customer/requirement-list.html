@@ -1,0 +1,339 @@
+{% extends "customer/navbar.html" %} {% block main %} {% load fields %}
+    <main>
+        <div class="container-fluid pt-3">
+            {% if search_field_visible or customer_search_field_visible %}
+                {% if search_value %}
+                    {% include 'customer/fields/search-fields.html'  with search_value=search_value additional_context='blah' %}
+
+                {% else %}
+                    {% include 'customer/fields/search-fields.html' %}
+                {% endif %}
+            {% endif %}
+			
+			{% if signed_search_field_visible %}
+                {% if search_value %}
+                    {% include 'customer/fields/signed_search-fields.html'  with search_value=search_value additional_context='blah' %}
+
+                {% else %}
+                    {% include 'customer/fields/signed_search-fields.html' %}
+                {% endif %}
+            {% endif %}
+
+            {% if deposit_search_field_visible %}
+                {% if search_value %}
+                    {% include 'customer/fields/deposit_search-fields.html'  with search_value=search_value additional_context='blah' %}
+
+                {% else %}
+                    {% include 'customer/fields/deposit_search-fields.html' %}
+                {% endif %}
+            {% endif %}
+
+            {% if on_file_search_visible %}
+                {% if search_value %}
+                    {% include 'customer/fields/onfile_search_fields.html'  with search_value=search_value additional_context='blah' %}
+
+                {% else %}
+                    {% include 'customer/fields/onfile_search_fields.html' %}
+                {% endif %}
+            {% endif %}
+
+            {% if order_search_field_visibie %}
+                {% if search_value %}
+                    {% include 'customer/fields/order_search-fields.html'  with search_value=search_value additional_context='blah' %}
+
+                {% else %}
+                    {% include 'customer/fields/order_search-fields.html' %}
+                {% endif %}
+            {% endif %}
+
+            {% if installation_search_field_visible %}
+                {% if search_value %}
+                    {% include 'customer/fields/installation_search-fields.html'  with search_value=search_value additional_context='blah' %}
+
+                {% else %}
+                    {% include 'customer/fields/installation_search-fields.html' %}
+                {% endif %}
+            {% endif %}
+
+            {% if account_search_field_visible %}
+                {% if search_value %}
+                    {% include 'customer/fields/account_search-fields.html'  with search_value=search_value additional_context='blah' %}
+
+                {% else %}
+                    {% include 'customer/fields/account_search-fields.html' %}
+                {% endif %}
+            {% endif %}
+
+            {% if service_search_field_visible %}
+                {% if search_value %}
+                    {% include 'customer/fields/service_search-fields.html'  with search_value=search_value additional_context='blah' %}
+
+                {% else %}
+                    {% include 'customer/fields/service_search-fields.html' %}
+                {% endif %}
+            {% endif %}
+
+            {% if finished_search_field_visible %}
+                {% if search_value %}
+                    {% include 'customer/fields/finish_search-fields.html'  with search_value=search_value additional_context='blah' %}
+
+                {% else %}
+                    {% include 'customer/fields/finish_search-fields.html' %}
+                {% endif %}
+            {% endif %}
+
+
+            {% if summary_enabled %}
+                <div class="row pb-3">
+                    <div class="col">
+                        <div class="card">
+                            <div class="card-header">
+                                Cash Flow
+                            </div>
+                            <div class="card-body">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text amount-field">$</span>
+                                    </div>
+                                    <input type="number" class="form-control" id="total_cash" readonly>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card">
+                            <div class="card-header">
+                                Bank Cash
+                            </div>
+                            <div class="card-body">
+                                {% csrf_token %}
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text amount-field">$</span>
+                                    </div>
+                                    <input type="number" class="form-control" id="total_bank"
+                                           value="{{ summary.total_bank|default:0 }}">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-outline-secondary" type="button" name="total_bank"
+                                                id="btn_update_total_bank">Update
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card">
+                            <div class="card-header">
+                                Payable
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col">Supplier</div>
+                                    <div class="col">$ <span
+                                            id="total_suppliers">{{ summary.total_suppliers|default:0|floatformat:2 }}</span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">Installer</div>
+                                    <div class="col">$ <span
+                                            id="total_installers">{{ summary.total_installers|default:0|floatformat:2 }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card">
+                            <div class="card-header">
+                                Receivables
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col">STC</div>
+                                    <div class="col">$ <span
+                                            id="total_stc">{{ summary.total_stc|default:0|floatformat:2 }}</span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">Customer</div>
+                                    <div class="col">$ <span
+                                            id="total_last_amount">{{ summary.total_last_amount|default:0|floatformat:2 }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+            <table class="table table-hover">
+                <thead>
+                <th scope="col">#</th>
+                {% for key,value in columns.items %}
+                    {% if supplierFlag  and key == 'Supplier' %}
+                        {% with ''|center:supplierMax as range %}
+                            {% for sup in range %}
+                                <th style="text-align:center;" scope="col">Supplier {{ forloop.counter }}</th>
+                            {% endfor %}
+                        {% endwith %}
+                    {% else %}					
+                        <th style="text-align:center; white-space: nowrap;" scope="col">{{ key }}</th>
+                    {% endif %}
+                {% endfor %}
+
+
+                </thead>
+                <tbody>
+                {% for requirement in requirements %}
+                    <tr onClick="handleClick({{ requirement.customer.id }})">
+                        <td>{{ forloop.counter }}</td>
+
+                        {% for key,value in columns.items %}
+
+                            {% if supplierFlag  and key == 'Supplier' %}
+
+                                {% get_Item suppliers requirement.id as supplierFor %}
+                                {% for supplier in supplierFor %}
+                                    {% if supplier.supplier_date_paid is none and  supplier.supplier_amount is not none %}
+                                        <td style="text-align:center;">
+                                            <div style="height:20px; overflow:hidden">
+                                                $ {{ supplier.supplier_amount|floatformat:2 }}</div>
+                                        </td>
+
+                                    {% elif  supplier.supplier_amount is none %}
+                                        <td style="text-align:center;">
+                                            <div style="height:20px; overflow:hidden">-</div>
+                                        </td>
+
+                                    {% else %}
+                                        <td style="text-align:center;">
+                                            <div style="height:20px; overflow:hidden">Paid</div>
+                                        </td>
+                                    {% endif %}
+                                {% endfor %}
+
+                                {% sup supplierFor supplierMax as remaining_count %}
+                                {% with ''|center:remaining_count as range %}
+                                    {% for _ in range %}
+                                        <td style="text-align:center;">
+                                            <div style="height:20px; overflow:hidden">-</div>
+                                        </td>
+
+                                    {% endfor %}
+                                {% endwith %}
+
+
+                            {% elif OrderFlag  and key == 'Order' %}
+                                <td style="text-align:center;">
+                                    <div style="height:20px; overflow:hidden">{% get_Item order requirement.id %}</div>
+                                </td>
+
+
+                            {% elif  key == 'Last amount' %}
+                                <td style="text-align:center;">
+                                    <div style="height:20px; overflow:hidden">
+                                        $ {{ requirement.last_amount_balance_due|linebreaksbr|floatformat:2 }}</div>
+                                </td>
+
+                            {% elif  key == 'STC' %}
+                                <td style="text-align:center;">
+                                    <div style="height:20px; overflow:hidden">
+                                        $ {{ requirement.stc_amount_payment|linebreaksbr|floatformat:2 }}</div>
+                                </td>
+
+
+                            {% elif installer_flag and key == 'Installer' %}
+                                <td style="text-align:center;">
+                                    {% with  requirement.installer_amount|linebreaksbr|floatformat:2 as installer_amount %}
+                                        {% with requirement.installer_date_paid as date_paid %}
+                                            <div style="height:20px; overflow:hidden">
+                                                {% if date_paid is not none %}
+                                                    Paid
+                                                {% elif installer_amount is not none and installer_amount != "" %}
+                                                    $ {{ requirement.installer_amount|linebreaksbr|default:0|floatformat:2 }}
+                                                    {% else %}
+                                                    $ 0.00
+                                                {% endif %}
+
+                                            </div>
+                                        {% endwith %}
+                                    {% endwith %}
+
+                                </td> 
+							{% elif key == 'Finance' %} 
+								<td style="text-align:center;">
+                                    <div style="height:20px; overflow:hidden">
+									{% if requirement.finance == 'Yes' or requirement.finance == 'No' %}
+										{{ requirement.finance }}
+									{% else %}
+										-
+									{% endif %}
+										
+									</div>
+								</td>
+
+                            {% else %}
+                                <td style="text-align:center;">
+                                    <div style="height:20px; overflow:hidden">{{ requirement|get_display_attr:value|linebreaksbr }}</div>
+                                </td>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="{{ colspan }}" class="text-center w-100">No results</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+{% endblock main %} {% block extra_js %}
+
+    <script>
+        function handleClick(id) {
+            var path = window.location.pathname;
+            if (path.endsWith('search')) {
+                path = path.replace('search', "");
+            }
+            window.location.pathname = path + id;
+        }
+
+        $(document).ready(function () {
+            $('.nav-item').removeClass("active");
+            $('#' + "{{current_tab}}").addClass("active")
+
+            $('#total_cash').val(((parseFloat($('#total_bank').val()) || 0) + parseFloat($('#total_stc').html()) + parseFloat($('#total_last_amount').html()) - parseFloat($('#total_suppliers').html()) - parseFloat($('#total_installers').html())).toFixed(2))
+
+            $('#total_bank').on('keyup', function () {
+                $('#total_cash').val(((parseFloat($('#total_bank').val()) || 0) + parseFloat($('#total_stc').html()) + parseFloat($('#total_last_amount').html()) - parseFloat($('#total_suppliers').html()) - parseFloat($('#total_installers').html())).toFixed(2))
+            });
+			
+
+            $('#btn_update_total_bank').click(function () {
+                let fd = new FormData();
+                fd.append('app_data_name', 'total_bank');
+                fd.append('app_data_value', $('#total_bank').val());
+
+                let csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+                $.ajax({
+                    url: "{% url 'app-data' %}",
+                    headers: {
+                        'X-CSRFToken': csrftoken
+                    },
+                    type: 'post',
+                    data: fd,
+                    contentType: false,
+                    processData: false,
+                    success: function (data) {
+                        json = JSON.parse(data);
+                        alert(json.message)
+                    },
+                });
+            });
+        });
+    </script>
+
+{% endblock extra_js %}

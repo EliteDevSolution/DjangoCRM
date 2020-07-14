@@ -1,0 +1,57 @@
+
+<!-- Below Javascript is used to pull notifications froms the server -->
+<!-- {% if perms.mailserver.mailserver_view %}
+
+<script>
+    window.onload = setup;
+
+    function get_notifications() {
+
+        var markup = '<div id="customer_alert" class="alert alert-success alert-dismissible my-0" role="alert">\
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+                            <span aria-hidden="true">×</span>\
+                        </button> New customer has been added\
+                    </div>';
+
+        try {
+            $.ajax('/mailserver/get_notification', {
+                success: function (res) {
+                    if (res && res.new_message) {
+                        var header = $('header');
+                        var previous_alert = $("#customer_alert")
+                        if (header.length && previous_alert.length == 0) {
+                            header.after(markup);
+                        }
+                    }
+                },
+                error: function (err) {
+                    console.error("this is error", err)
+                }
+            })
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+
+
+    function setup() {
+        var passChecks = true;
+
+        if (window.$ && typeof (window.$) === "function") {
+
+            get_notifications();
+            setInterval(get_notifications, 60000);
+        } else {
+            passChecks = false;
+        }
+
+        /* if did not pass checks, then recall function to check again after a specified time period */
+        if (!passChecks) {
+            setTimeout(runVariant, 10);
+        }
+
+    }
+
+
+</script>{% endif %}  -->

@@ -1,0 +1,166 @@
+<h2 class="py-3">Last Amount</h2>
+
+<div class="form-row">
+    <div class="form-group col-md-3">
+        <label for="supplier-amount">Last Amount</label>
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <span class="input-group-text amount-field">$</span>
+            </div>
+            <input type="number" class="form-control" id="last-amount-mirror" value="{{ requirement.last_amount|floatformat:2 }}"
+                   disabled placeholder="0.00" step="0.01">
+        </div>
+    </div>
+    <div class="form-group col-md-3">
+        <label for="supplier-amount">Payment</label>
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <span class="input-group-text amount-field">$</span>
+            </div>
+            <input type="number" class="form-control" name="last_amount_payment" id="last_amount_payment"
+                   value="{{ requirement.last_amount_payment|floatformat:2 }}" placeholder="0.00" step="0.01">
+        </div>
+    </div>
+    <div class="form-group col-md-3">
+        <label for="last-amount-paid-date">Date Paid</label>
+        <input type="text" class="form-control" id="last-amount-paid-date" name="last_amount_paid_date"
+               value="{{ requirement.last_amount_paid_date|date:'d/m/Y' }}" placeholder="dd/mm/yyyy"
+               data-provide="datepicker" data-date-format="dd/mm/yyyy" data-date-autoclose="true"
+               data-date-today-btn="linked" data-date-clear-btn="true" required>
+    </div>
+    <div class="form-group col-md-3">
+        <label for="deposit-payment">Payment</label>
+        <select id="last_amount_payment" name="last_amount_payment_method" class="form-control"
+                {% if required_fields.deposit_fields.deposit_payment %}required="required"{% endif %}>
+            <option value="">Select...</option>
+            {% for payment in payments %}
+                <option value="{{ payment.id }}"
+                        {% if payment.id == requirement.last_amount_payment_method_id %}selected="selected"{% endif %}>{{ payment.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="form-group col-md-4">
+        <label for="supplier-amount">Balance due</label>
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <span class="input-group-text amount-field">$</span>
+            </div>
+            <input type="number" class="form-control" name="last_amount_balance_due" id="last_amount_balance_due"
+                   value="{{ requirement.last_amount_balance_due|floatformat:2 }}" readonly placeholder="0.00" step="0.01">
+        </div>
+		<!--adding a script tag for setting default value to balance field --> <!-- Removing below script code so that balance is set to default via django template itself -->
+		<script>
+		//document.getElementById("last_amount_balance_due").defaultValue = document.getElementById('last-amount-mirror').value
+		</script>
+    </div>
+    <div class="form-group col-md-8">
+        <label for="stc_notes">Notes</label>
+        <textarea class="form-control" id="last_amount_notes" name="last_amount_notes" placeholder="Enter notes"
+                  rows="3"
+        >{{ requirement.last_amount_notes|default:"" }}</textarea>
+    </div>
+</div>
+
+<h2 class="py-3">STC</h2>
+<div class="form-row">
+    <div class="row">
+        <div class="form-group col-md-4">
+            <label for="Unit">Unit</label>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text amount-field">$</span>
+                </div>
+                <input type="number" class="form-control" id="Unit" name="Unit"
+                       value="{{ requirement.unit|floatformat:2 }}" placeholder="Enter PCS" required placeholder="0.00"
+                       step="0.01">
+            </div>
+        </div>
+
+
+        <div class="form-group col-md-4">
+            <label for="stc-unit_pric">Unit price</label>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text amount-field">$</span>
+                </div>
+                <input type="number" class="form-control" id="stc-unit_price" name="unit_price"
+                       value="{{ requirement.unit_price|floatformat:2 }}" placeholder="Enter unit price" required placeholder="0.00"
+                       step="0.01">
+            </div>
+        </div>
+
+
+        <div class="form-group col-md-4">
+            <label for="Stc">Stc amount</label>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text amount-field">$</span>
+                </div>
+                <input type="number" class="form-control" id="Stc" name="Stc"
+                       value="{{ requirement.stc_amount|floatformat:2 }}" placeholder="Enter Stc" required placeholder="0.00"
+                       step="0.01">
+            </div>
+        </div>
+
+    </div>
+    <div class="row">
+
+        <div class="form-group col-md-4">
+            <label for="STC-PAYMENT">Payment</label>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text amount-field">$</span>
+                </div>
+                <input type="number" class="form-control" id="STC-PAYMENT" name="STC_PAYMENT"
+                       value="{{ requirement.STC_PAYMENT|floatformat:2 }}" placeholder="Enter payment" required placeholder="0.00"
+                       step="0.01">
+            </div>
+        </div>
+
+        <div class="form-group col-md-4">
+            <label for="stc-date-paid">Paid</label>
+            <input type="text" class="form-control" id="stc-date-paid" name="stc_date_paid"
+                   value="{{ requirement.stc_date_paid|date:'d/m/Y'|default:'' }}" placeholder="dd/mm/yyyy"
+                   data-provide="datepicker" data-date-format="dd/mm/yyyy" data-date-autoclose="true"
+                   data-date-today-btn="linked"
+                   data-date-clear-btn="true" required>
+        </div>
+
+        <div class="form-group col-4">
+            <label for="Stc_Application" class="col-sm-12 col-form-label ">Stc Application</label>
+            <div class="col-sm-10 pl-5">
+                <input class="form-check-input" type="checkbox" id="Stc_Application" name="Stc_Application"
+                        {% if requirement.stc_application %}
+                       checked {% endif %}>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<div class="form-row">
+    <div style="width:-webkit-fill-available;" class="row">
+        <div class="form-group col-4">
+            <label for="STC-Amount-Payment">Balance due</label>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text amount-field">$</span>
+                </div>
+                <input type="number" class="form-control" id="STC-Amount-Payment" name="STC_Amount_Payment"
+                       value="{{ requirement.stc_amount_payment|floatformat:2 }}" placeholder="Enter Balance due" required
+                       placeholder="0.00" step="0.01" disabled>
+            </div>
+        </div>
+		<!--adding a script tag for setting default value to balance field -->
+		<script>
+		document.getElementById("STC-Amount-Payment").defaultValue = document.getElementById("Stc").value;
+		</script>
+        <div class="form-group col-md-8">
+            <label for="stc_notes">Notes</label>
+            <textarea class="form-control" id="stc_notes" name="stc_notes" placeholder="Enter notes"
+                      rows="3"
+            >{{ requirement.stc_notes|default:"" }}</textarea>
+        </div>
+    </div>
+</div>

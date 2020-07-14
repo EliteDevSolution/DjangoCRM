@@ -1,0 +1,53 @@
+
+{% if power_meter_connection_disable %}
+    <div></div>
+{% else %}
+    <h2 class="py-3">Connection</h2>
+
+    <div class="row">
+        <div class="form-group col-6">
+            <label for="power-connection" class="col-sm-12 col-form-label">Power connection</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="power-connection" name="power_connection"
+                       value="{{ requirement.power_connection|default:'' }}" placeholder="Enter power connection"
+                       {% if required_fields.system_fields.power_connection %}required="required"{% endif %}>
+            </div>
+        </div>
+
+        <div class="form-group col-6">
+            <label for="meter-connection" class="col-sm-12 col-form-label">Meter connection</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="meter-connection" name="meter_connection"
+                       value="{{ requirement.meter_connection|default:'' }}" placeholder="Enter meter connection"
+                       {% if required_fields.system_fields.meter_connection %}required="required"{% endif %}>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="form-group col-6">
+            <label for="power-connection" class="col-sm-12 col-form-label">MNI</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="MNI" name="MNI"
+                       value="{{ requirement.MNI|default:'' }}" placeholder="MNI"
+                       {% if required_fields.system_fields.power_connection %}required="required"{% endif %}>
+            </div>
+        </div>
+
+
+        <div class="form-group col-6">
+            <label for="customer-check" class="col-sm-2 col-form-label">Application</label>
+            <div class="col-sm-10 pl-5">
+                <input class="form-check-input" type="checkbox" id="Application" name="Application"
+                        {% if requirement.application %}
+                       checked {% endif %}>
+            </div>
+        </div>
+
+    </div>
+
+
+
+
+{% endif %}

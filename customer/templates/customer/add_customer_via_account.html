@@ -1,0 +1,543 @@
+{% extends "customer/navbar.html" %} {% block main %} {% load fields %}
+
+<main>
+    <div class="container-fluid">
+	<form id="add_customer" class="py-3" method="post" action="{% url 'account-add-customer' %}">
+	{% csrf_token %}
+	<div class="row">
+        <div class="ml-auto px-3">
+			<button type="submit" class="btn btn-primary mx-3" onclick="removerequired()" name="btn_save">
+              Save
+            </button>
+        </div>
+    </div>
+        <div class="row">
+            <div class="col-md-6 p-3">
+			
+                <h2 class="py-3">Add New Customer</h2>
+				<!--Cutomer Fields-->
+				<div>{% include 'customer/fields/customer-fields.html' %}</div>
+				<!--follow up field-->
+				<div>{% if options.follow_up %}{% include 'customer/fields/follow-up-field.html' %}{% endif %}</div>
+				<!--Connection Details-->
+				{% include 'customer/fields/connection_field.html' %}
+
+				<!--Installation data-->
+				<div>
+					{% if options.installation_data_enabled %}
+						<h2 class="py-3">Installation Data</h2>
+						{% include 'customer/fields/installation-fields.html' %} {% endif %}
+				</div>
+				<!--Suppliers-->
+				<div>
+					{% if options.supplier_list_enabled and perms.customer.change_supplier %}
+						<h2 class="py-3">Supplier</h2>
+						{% include 'customer/fields/supplier-fields.html' %}
+						<div id="supplier-list">
+							{% include 'customer/supplier-list.html' %}
+						</div>
+					{% endif %}
+				</div>
+				<!--File upload-->
+                <div>
+					{% if options.file_upload_enabled %}
+					<h2 class="py-3">File Upload</h2>
+                    {% include 'customer/fields/upload-file-fields.html' %}
+					{% endif %}
+				</div>
+				<!--Uploaded files list-->
+				<div>
+				{% if options.file_list_enabled %}
+					<div id="file-list">
+						{% include 'customer/file-list.html' %}
+					</div>
+				{% endif %}
+				</div>
+				{% if options.service_data_enabled %}
+                 <h2 class="py-3">New Service</h2>
+                        {% include 'customer/fields/service-fields.html' %}
+                        {% include 'customer/fields/service-notes-fields.html' %} {% endif %}
+			</div>
+			
+			<div class="col-md-6">
+				{% if options.requirement_data_enabled %}
+
+					<h2 class="py-3">System Details</h2>
+					{% include 'customer/fields/requirement-fields.html' %}
+
+
+					<div class="row">
+						<!--Customer check-->
+
+						{% if options.customer_check_enabled and perms.customer.change_payment %}
+							{% include 'customer/fields/customer-check-fields.html' %} {% endif %}
+						<!--finance-->
+						{% if options.Finance and perms.customer.change_payment %}
+							{% include 'customer/fields/finance-fields.html' %} {% endif %}
+					</div>
+				
+				<!--Deposit info-->
+						<div>
+							{% if options.deposit_info_enabled and perms.customer.change_payment %}
+							<h2 class="py-3">Deposit data</h2>
+							{% include 'customer/fields/deposit-fields.html' %} {% endif %}
+                         </div>
+                            <!--Last amount-->
+                            <div>
+                                {% if options.last_amount_data_enabled %}
+                                    {% include 'customer/fields/last-amount-fields.html' %} {% endif %}
+                            </div>
+                        {% endif %}
+			</div>
+		</div>
+	</form>
+</div>
+</main>
+
+{% endblock main %} {% block extra_js %}
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            {% if request.user|has_group:'installer'  %}
+                var inputs = document.getElementsByTagName('input');
+                for (var i = 0; i < inputs.length; i += 1) {
+                    if (inputs[i].id == 'installer-notes') {
+                        inputs[i].required = true;
+                    } else {
+                        inputs[i].readOnly = true;
+                    }
+                }
+
+
+                var inputs = document.getElementsByTagName('select');
+                for (var i = 0; i < inputs.length; i += 1) {
+                    if (inputs[i].id == 'installer-notes') {
+                        inputs[i].required = true;
+                    } else {
+                        inputs[i].disabled = true;
+                    }
+                }
+
+                var inputs = document.getElementsByTagName('textarea');
+                for (var i = 0; i < inputs.length; i += 1) {
+                    if (inputs[i].id == 'installer-notes') {
+                        inputs[i].required = true;
+                    } else {
+                        inputs[i].readOnly = true;
+                    }
+                }
+
+
+
+            {% endif %}
+
+
+            $('.nav-item').removeClass("active");
+            $('#' + "{{current_tab}}").addClass("active")
+            $('#add_customer').on('submit', function () {
+
+                var tableSize = $('#file-list table tbody tr').length;
+                var btn = $(this).find("button[type=submit]:focus").attr("name");
+                ;
+                console.log(btn)
+                if (btn == 'btn_save') {
+                    return confirm('Do you really want to submit the form?');
+                } else if (tableSize >= 1) {
+                    document.getElementById('upload-file').required = false;
+                    return confirm('Do you really want to submit the form?');
+
+                } else {
+                    alert('You have To click Upload');
+                    event.preventDefault();
+                }
+            });
+
+
+            $('#upload-file').on('change', function () {
+                var fileName = $(this).val();
+                $(this).next('.custom-file-label').html(fileName.replace(/^.*[\\\/]/, ''));
+                $('input[name="upload-name"]').prop("disabled", false);
+                $('#upload-btn').prop("disabled", false);
+                $('input[name="upload-name"]').val(fileName.replace(/^.*[\\\/]/, ''));
+            });
+
+            $("#btn-delete").click(function () {
+                let fd = new FormData();
+                fd.append('pk', $('input[name="pk"]').val());
+                fd.append('btn_delete', $('input[name="pk"]').val());
+                // id = $('input[name="pk"]').val();
+                // console.log(id);
+                let csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+                let path = window.location.pathname.toString().split("/")[1];
+
+                console.log(path)
+                $.ajax({
+                    url: "{% url 'requirement' %}",
+                    headers: {
+                        'X-CSRFToken': csrftoken
+                    },
+                    type: 'post',
+                    data: fd,
+                    contentType: false,
+                    processData: false,
+                    success: function (data) {
+
+                        window.location.pathname = "/" + path;
+                        // $('.custom-file-label').html('Choose file');
+                        // $('input[name="upload-name"]').val('');
+                        // $('input[name="upload-name"]').prop("disabled", true);
+                        // $('#upload-btn').prop("disabled", true);
+                        // $('#file-list').html(json.file_list_html);
+                    },
+                });
+                // let fd = new FormData();
+                // let csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+                // let files = $('#upload-file')[0].files[0];
+                // fd.append('customer_id', $('input[name="pk"]').val());
+                // fd.append('file_name', $('input[name="upload-name"]').val());
+                // fd.append('file', files);
+
+                // $.ajax({
+                //     url: "{% url 'upload-file' %}",
+                //     headers: {
+                //         'X-CSRFToken': csrftoken
+                //     },
+                //     type: 'post',
+                //     data: fd,
+                //     contentType: false,
+                //     processData: false,
+                //     success: function(data) {
+                //         json = JSON.parse(data);
+                //         alert(json.message)
+                //         $('.custom-file-label').html('Choose file');
+                //         $('input[name="upload-name"]').val('');
+                //         $('input[name="upload-name"]').prop("disabled", true);
+                //         $('#upload-btn').prop("disabled", true);
+                //         $('#file-list').html(json.file_list_html);
+                //     },
+                // });
+            });
+            $("#upload-btn").click(function () {
+                let fd = new FormData();
+                let csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+                let files = $('#upload-file')[0].files[0];
+                //fd.append('customer_id', $('input[name="pk"]').val());
+                fd.append('file_name', $('input[name="upload-name"]').val());
+                fd.append('file', files);
+                $.ajax({
+                    xhr: function () {
+                        var xhr = new window.XMLHttpRequest();
+                        var flag = 0;
+
+
+                        xhr.upload.addEventListener('progress', function (e) {
+                            if (e.lengthComputable) {
+                                flag = 1;
+                                var percent = Math.round((e.loaded / e.total) * 100);
+                                console.log(percent)
+                                $('#progressBar').attr('aria-valuenow', percent).css('width', percent + '%').text(percent + '%');
+                            }
+                        });
+                        return xhr;
+
+                    },
+
+
+                    url: "{% url 'upload-file' %}",
+                    headers: {
+                        'X-CSRFToken': csrftoken
+                    },
+                    type: 'post',
+                    data: fd,
+                    contentType: false,
+                    processData: false,
+                    success: function (data) {
+                        json = JSON.parse(data);
+                        alert(json.message)
+                        $('.custom-file-label').html('Choose file');
+                        $('input[name="upload-name"]').val('');
+                        $('input[name="upload-name"]').prop("disabled", true);
+                        $('#upload-btn').prop("disabled", true);
+                        $('#file-list').html(json.file_list_html);
+                    },
+                });
+            });
+
+
+            function STC_Balance() {
+                var stc = parseFloat($('#Stc').val());
+                var payment = parseFloat($('#STC-PAYMENT').val());
+                $("#STC-Amount-Payment").val(parseFloat(stc - payment))
+            }
+
+            STC_Balance()
+
+            $('#Stc').on('keyup change', function () {
+                STC_Balance()
+            });
+
+            $('#STC-PAYMENT').on('keyup change', function () {
+                STC_Balance()
+            });
+
+
+            // when extra-amount, system-price, deposit-amount change run formulas
+            $('#extra-amount, #system-price, #deposit-amount').on('blur', function () {
+                //make sure there isn't any value empty
+                if ($('#extra-amount').val() == "") $('#extra-amount').val(0.00.toFixed(2))
+                if ($('#system-price').val() == "") $('#system-price').val(0.00.toFixed(2))
+                if ($('#deposit-amount').val() == "") $('#deposit-amount').val(0.00.toFixed(2))
+                // run All forumlas
+                $('#total-price').val(parseFloat($('#extra-amount').val()) + parseFloat($('#system-price').val()))
+                $('#total-price-mirror').val($('#extra-amount').val() + $('#system-price').val())
+                $('#last-amount').val(parseFloat($('#total-price').val()).toFixed(2) - parseFloat($('#deposit-amount').val()).toFixed(2))
+                $('#last-amount-mirror').val($('#total-price').val() - $('#deposit-amount').val())
+                $('#last_amount_balance_due').val(parseFloat(parseFloat($('#last-amount').val()) - $('#last_amount_payment').val()));
+                // round every thing to 2 deicmals
+                $('#last-amount').val((Math.round(($('#last-amount').val()) * 100) / 100).toFixed(2))
+                $('#last-amount-mirror').val((Math.round(($('#last-amount-mirror').val()) * 100) / 100).toFixed(2))
+                $('#last_amount_balance_due').val((Math.round(($('#last_amount_balance_due').val()) * 100) / 100).toFixed(2))
+                $('#total-price-mirror').val((Math.round(($('#total-price-mirror ').val()) * 100) / 100).toFixed(2))
+                $('#total-price').val((Math.round(($('#total-price').val()) * 100) / 100).toFixed(2))
+
+
+            });
+
+            // run when last_amount_payment change
+            $('#last_amount_payment').on('keyup change', function () {
+                //make sure there isn't any value empty
+                if ($('#last_amount_payment').val() == "") $('#last_amount_payment').val(0.00.toFixed(2))
+                // forumla
+                $('#last_amount_balance_due').val(parseFloat($('#last-amount').val()) - parseFloat($('#last_amount_payment').val()));
+                // round every thing to zero
+                $('#last_amount_balance_due').val((Math.round(($('#last_amount_balance_due').val()) * 100) / 100).toFixed(2))
+            });
+
+
+            // Save / update supplier info
+            $("#btn-save-supplier").click(function () {
+                let fd = new FormData();
+                //fd.append('requirement_pk', $('input[name="requirement_pk"]').val());
+                fd.append('supplier_pk', $('input[name="supplier_pk"]').val());
+                fd.append('supplier_name', $('input[name="supplier_name"]').val());
+                fd.append('supplier_invoice', $('input[name="supplier_invoice"]').val());
+                fd.append('supplier_amount', $('input[name="supplier_amount"]').val());
+                fd.append('supplier_date_paid', $('input[name="supplier_date_paid"]').val());
+                fd.append('supplier_notes', $('textarea[name="supplier_notes"]').val());
+                let csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+                $.ajax({
+                    url: "{% url 'supplier-save' %}",
+                    headers: {
+                        'X-CSRFToken': csrftoken
+                    },
+                    type: 'post',
+                    data: fd,
+                    contentType: false,
+                    processData: false,
+                    success: function (data) {
+                        json = JSON.parse(data);
+                        alert(json.message)
+                        $('#supplier-list').html(json.supplier_list_html);
+                        $('input[name="supplier_pk"]').val('')
+                        $('input[name="supplier_name"]').val('')
+                        $('input[name="supplier_invoice"]').val('')
+                        $('input[name="supplier_amount"]').val('')
+                        $('input[name="supplier_date_paid"]').val('')
+                        $('textarea[name="supplier_notes"]').val('')
+                    },
+                });
+            });
+            // clicking on any supplier edit button
+            $(document).on("click", ".btn-edit", function () {
+                id = $(this).attr('id')
+                tr = $('#' + id)
+                $('input[name="supplier_pk"]').val(id)
+                $('input[name="supplier_name"]').val(tr.find('td[field="supplier_name"]').html().replace("-", ""))
+                $('input[name="supplier_invoice"]').val(tr.find('td[field="supplier_invoice"]').html().replace("-", ""))
+                $('input[name="supplier_amount"]').val(tr.find('span[field="supplier_amount"]').html().replace("-", ""))
+                $('input[name="supplier_date_paid"]').val(tr.find('td[field="supplier_date_paid"]').html().replace("-", ""))
+                $('textarea[name="supplier_notes"]').val(tr.find('td[field="supplier_notes"]').html().replace("-", ""))
+                $('html, body').animate({
+                    scrollTop: $("#supplier-form").offset().top
+                }, 1000);
+            });
+            // clicking on any supplier delete button
+            $(document).on("click", ".supplier-delete", function () {
+                id = $(this).attr('id')
+                tr = $('#' + id)
+                supplier_name = tr.find('td[field="supplier_name"]').html()
+
+                if (confirm('Do you want to delete supplier ' + supplier_name + '?')) {
+                    let fd = new FormData();
+                    fd.append('requirement_pk', $('input[name="requirement_pk"]').val());
+                    fd.append('supplier_pk', $(this).attr('id'));
+                    fd.append('supplier_name', supplier_name);
+
+                    let csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+                    $.ajax({
+                        url: "{% url 'supplier-delete'  %}",
+                        headers: {
+                            'X-CSRFToken': csrftoken
+                        },
+                        type: 'post',
+                        data: fd,
+                        contentType: false,
+                        processData: false,
+                        success: function (data) {
+                            json = JSON.parse(data);
+                            alert(json.message)
+                            $('#supplier-list').html(json.supplier_list_html);
+                            $('input[name="supplier_pk"]').val('')
+                            $('input[name="supplier_name"]').val('')
+                            $('input[name="supplier_invoice"]').val('')
+                            $('input[name="supplier_amount"]').val('')
+                            $('input[name="supplier_date_paid"]').val('')
+                            $('textarea[name="supplier_notes"]').val('')
+                        },
+                    });
+                }
+            });
+            // clear all supplier fields
+            $('#btn-clear-supplier').click(function () {
+                $('input[name="supplier_pk"]').val('')
+                $('input[name="supplier_name"]').val('')
+                $('input[name="supplier_invoice"]').val('')
+                $('input[name="supplier_amount"]').val('')
+                $('input[name="supplier_date_paid"]').val('')
+                $('textarea[name="supplier_notes"]').val('')
+            });
+
+            $(document).on("click", ".btn-note-edit", function () {
+                id = $(this).attr('id')
+                tr = $('#' + id)
+                $('input[name="service_note_pk"]').val(id)
+                $('textarea[name="service_notes"]').val(tr.find('td[field="content"]').html().replace("-", "").trim())
+                $('html, body').animate({
+                    scrollTop: $('#service-notes-form').offset().top
+                }, 1000);
+            });
+
+            $("#btn-save-service-note").click(function () {
+                let fd = new FormData();
+                fd.append('service_note_pk', $('input[name="service_note_pk"]').val());
+                fd.append('requirement_pk', $('input[name="requirement_pk"]').val());
+                fd.append('service_notes', $('textarea[name="service_notes"]').val());
+
+                let csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+                $.ajax({
+                    url: "{% url 'service-note-save' %}",
+                    headers: {
+                        'X-CSRFToken': csrftoken
+                    },
+                    type: 'post',
+                    data: fd,
+                    contentType: false,
+                    processData: false,
+                    success: function (data) {
+                        json = JSON.parse(data);
+                        alert(json.message)
+                        $('#services_notes').html(json.service_notes_list_html);
+                        $('input[name="service_note_pk"]').val('')
+                        $('textarea[name="service_notes"]').val('')
+                    },
+                });
+            });
+
+            $(document).on("click", ".btn-note-delete", function () {
+                id = $(this).attr('id')
+                tr = $('#' + id)
+
+                if (confirm('Do you want to delete this service note?')) {
+                    let fd = new FormData();
+                    fd.append('requirement_pk', $('input[name="requirement_pk"]').val());
+                    fd.append('service_note_pk', $(this).attr('id'));
+
+                    let csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+                    $.ajax({
+                        url: "{% url 'service-note-delete'  %}",
+                        headers: {
+                            'X-CSRFToken': csrftoken
+                        },
+                        type: 'post',
+                        data: fd,
+                        contentType: false,
+                        processData: false,
+                        success: function (data) {
+                            json = JSON.parse(data);
+                            alert(json.message)
+                            $('#services_notes').html(json.service_notes_list_html);
+                            $('input[name="service_note_pk"]').val('')
+                            $('textarea[name="service_notes"]').val('')
+                        },
+                    });
+                }
+            });
+
+        });
+
+        //Remove all required fields, used when saving
+        function removerequired() {
+            inputs = document.getElementsByTagName('input')
+            for (x = 0; x < inputs.length; x++) {
+                inputs[x].required = false;
+            }
+            inputs = document.getElementsByTagName('textarea')
+            for (x = 0; x < inputs.length; x++) {
+                inputs[x].required = false;
+            }
+
+            inputs = document.getElementsByTagName('select')
+            for (x = 0; x < inputs.length; x++) {
+                inputs[x].required = false;
+            }
+        }
+
+        // make sure the tables aren't empty, and if so, remove required
+        function table_required() {
+            var tableSize = $('#supplier-list table tbody tr').length;
+            if (tableSize >= 1) {
+                console.log("here")
+                document.getElementById('supplier-name').required = false;
+                document.getElementById('supplier-invoice').required = false;
+                document.getElementById('supplier-amount').required = false;
+                document.getElementById('supplier-date-paid').required = false;
+                document.getElementById('supplier-notes').required = false;
+            }
+            var tableSize = $('#file-list table tbody tr').length;
+            if (tableSize >= 1) {
+                document.getElementById('upload-file').required = falsbuttone;
+            }
+        }
+
+
+        function delete_file(file_id) {
+            let fd = new FormData();
+            let csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+            fd.append('file', file_id);
+            fd.append('customer_id', $('input[name="pk"]').val());
+
+            $.ajax({
+
+                url: "{% url 'delete-file' %}",
+                headers: {
+                    'X-CSRFToken': csrftoken
+                },
+                type: 'post',
+                data: fd,
+                contentType: false,
+                processData: false,
+                success: function (data) {
+                    json = JSON.parse(data);
+                    alert(json.message)
+                    $('.custom-file-label').html('Choose file');
+                    $('#file-list').html(json.file_list_html);
+                },
+            });
+        }
+    </script>
+
+{% endblock extra_js %}

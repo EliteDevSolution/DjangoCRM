@@ -1,0 +1,11 @@
+<div class="form-group col-6">
+    <h2 class="py-3">Customer check</h2>
+<br>
+    <div class="row">
+        <label for="customer-check" class="col-sm-2 col-form-label">Checked</label>
+        <div class="col-sm-10 pl-5">
+            <input class="form-check-input" type="checkbox" id="customer-check" name="customer_check"
+                    {% if customer.customer_check %} checked {% endif %}>
+        </div>
+    </div>
+</div>

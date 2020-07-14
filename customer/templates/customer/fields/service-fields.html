@@ -1,0 +1,101 @@
+<div class="d-none">
+    <input type="number" name="pk" value="{{ customer.pk }}">
+</div>
+<div class="d-none">
+    <input type="number" name="requirement_pk" value="{{ requirement.pk }}">
+</div>
+
+<div class="row">
+
+    <div class="form-group col-lg-4 col-form-label">
+        <label for="agm" class="col-lg-12 col-form-label">AGM</label>
+        <div class="col-lg-12">
+            <input type="text" class="form-control" id="agm" name="agm" placeholder="Enter AGM"
+                   value="{{ customer.agm|default:'' }}"
+                   {% if required_fields.service_fields.agm %}required="required"{% endif %}>
+        </div>
+    </div>
+
+
+    <div class="form-group col-sm-4 col-form-label">
+        <label for="customer-name" class="col-lg-12 col-form-label">Customer Name</label>
+        <div class="col-lg-12">
+            <input type="text" class="form-control" id="customer-name" name="customer_name"
+                   value="{{ customer.customer_name|default:'' }}" placeholder="Enter customer name"
+                   {% if required_fields.service_fields.customer_name %}required="required"{% endif %}>
+        </div>
+    </div>
+
+    <div class="form-group col-sm-4 col-form-label">
+        <label for="phone-number" class="col-lg-12 col-form-label">Phone Number</label>
+        <div class="col-lg-12">
+            <input type="text" class="form-control" id="phone-number" name="phone_number" pattern="^[0-9]*$"
+                   value="{{ customer.phone_number|default:'' }}" placeholder="Enter a phone number"
+                   {% if required_fields.service_fields.phone_number %}required="required"{% endif %}>
+        </div>
+    </div>
+
+</div>
+
+<div class="row">
+    <div class="form-group col-lg-4 col-form-label">
+        <label for="customer-email" class="col-lg-12 col-form-label">Customer Email</label>
+        <div class="col-lg-12">
+            <input type="email" class="form-control" id="customer-email" name="customer_email"
+                   value="{{ customer.customer_email|default:'' }}" placeholder="Enter email address"
+                   {% if required_fields.service_fields.customer_email %}required="required"{% endif %}>
+        </div>
+    </div>
+
+
+    <div class="form-group col-lg-4 col-form-label">
+        <label for="installation-date" class="col-lg-12 col-form-label">Installation date</label>
+        <div class="col-lg-12">
+            <input type="text" class="form-control" id="installation-date" name="installation_date"
+                   value="{{ requirement.installation_date|date:'d/m/Y'|default:'' }}" placeholder="dd/mm/yyyy"
+                   data-provide="datepicker" data-date-format="dd/mm/yyyy" data-date-autoclose="true"
+                   data-date-today-btn="linked" data-date-clear-btn="true"
+                   {% if required_fields.service_fields.installation_date %}required="required"{% endif %}>
+        </div>
+    </div>
+
+
+    <div class="form-group col-lg-4 col-form-label">
+        <label for="installer" class="col-lg-12 col-form-label">Installer</label>
+        <div class="col-lg-12">
+            <select name="installer" id="installer" class="form-control"
+                    {% if required_fields.service_fields.installer %}required="required"{% endif %}>
+                <option value="">Select...</option>
+                {% for installer in installers %}
+                    <option value="{{ installer.id }}"
+                            {% if installer.id == requirement.installer_id %}selected="selected"{% endif %}>{{ installer.username }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+
+</div>
+
+
+
+<div class="row ">
+<div class="form-group col-lg-12 col-form-label">
+    <label for="customer-address" class="col-lg-12 col-form-label">Customer Address</label>
+    <div class="col-lg-12">
+        <input type="text" class="form-control" id="customer-address" name="customer_address"
+               value="{{ customer.customer_address|default:'' }}" placeholder="Enter customer address"
+               {% if required_fields.service_fields.customer_address %}required="required"{% endif %}>
+    </div>
+</div>
+
+{% if not options.service_note_disabled %}
+    <div class="form-group col-lg-12 col-form-label">
+        <label for="service-note" class="col-lg-12 col-form-label">Service note</label>
+        <div class="col-lg-12">
+            <textarea class="form-control" id="service-note" name="service_note" placeholder="Enter service note"
+                      rows="3"
+                      {% if required_fields.service_fields.service_note %}required="required"{% endif %}></textarea>
+        </div>
+    </div>
+{% endif %}
+</div>

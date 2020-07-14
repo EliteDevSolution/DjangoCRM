@@ -1,0 +1,16 @@
+{% extends "customer/navbar.html" %} {% block main %} {% load fields %}
+    <main>
+        <div class="container">
+            <div class="card mt-5 w-50 mx-auto">
+                <div class="card-body">
+                    <form method="post" action="{% url 'export_xls' %}">
+                        {% csrf_token %} {% if redirect_field_value %}
+                        <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" /> {% endif %}
+                        <button class="btn btn-primary btn-block" type="submit"> Download </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </main>
+{% endblock main %}

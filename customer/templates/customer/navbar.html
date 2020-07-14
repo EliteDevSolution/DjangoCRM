@@ -1,0 +1,148 @@
+{% extends "customer/base.html" %} {% load static %} {% block extra_style %}
+
+<style>
+    .nav-item.active {
+        border-radius: 5px;
+        background-color: rgb(160, 206, 248);
+    }
+    
+    .amount-field {
+        background-color: rgb(132, 196, 117);
+        color: black;
+    }
+    
+    .w-15 {
+        width: 15% !important;
+    }
+    
+    .form-group>label {
+        font-weight: bold;
+    }
+    
+    h2.py-3 {
+        font-size: 1rem;
+        font-weight: bold;
+    }
+    
+    table tbody>tr:hover {
+        cursor: pointer;
+    }
+    
+    .table td {
+        padding: 0;
+    }
+    
+    body {
+        font-size: 12px;
+    }
+    
+    li.nav-item a {
+        font-size: 1rem;
+        font-weight: 400;
+    }
+    
+    input[type=text],
+    select.form-control {
+        font-size: 12px;
+    }
+    
+    #searchFormGroup {
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        margin: 0;
+    }
+    
+    #search_form {
+        display: flex;
+    }
+</style>
+
+{% endblock extra_style %} {% block body %}
+
+<header>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">CRM</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                {% if perms.customer.customer_list %}
+                <li class="nav-item" id="home-tab">
+                    <a class="nav-link" href="/">Home</a>
+                </li>
+
+                <li class="nav-item" id="customer-tab">
+                    <a class="nav-link" id="customer-tab" href="{% url 'newLead-list' %}">New Lead</a>
+                </li>
+                {% endif %} {% if perms.customer.sales_signed %}
+                <li class="nav-item" id="signed-tab">
+                    <a class="nav-link" id="signed-tab" href="{% url 'signed-list' %}">Signed</a>
+                </li>
+                {% endif %} {% if perms.customer.deposit_list %}
+                <li class="nav-item" id="deposit-tab">
+                    <a class="nav-link" id="deposit-tab" href="{% url 'deposit-list' %}">Deposit</a>
+                </li>
+                {% endif %} {% if perms.customer.on_file_list %}
+                <li class="nav-item" id="on-file-tab">
+                    <a class="nav-link" href="{% url 'on-file-list' %}">On file</a>
+                </li>
+                {% endif %} {% if perms.customer.order_list %}
+                <li class="nav-item" id="order-tab">
+                    <a class="nav-link" href="{% url 'order-list' %}">Order</a>
+                </li>
+                {% endif %} {% if perms.customer.installation_list %}
+                <li class="nav-item" id="installation-tab">
+                    <a class="nav-link" href="{% url 'installation-list' %}">Installation</a>
+                </li>
+                {% endif %} {% if perms.customer.account_list %}
+                <li class="nav-item" id="account-tab">
+                    <a class="nav-link" href="{% url 'account-list' %}">Account</a>
+                </li>
+                {% endif %} {% if perms.customer.service_list %}
+                <li class="nav-item" id="service-tab">
+                    <a class="nav-link" href="{% url 'service-list' %}">Service</a>
+                </li>
+                {% endif %} {% if perms.customer.finished_list %}
+                <li class="nav-item" id="finished-tab">
+                    <a class="nav-link" href="{% url 'finished-list' %}">Finished</a>
+                </li>
+                {% endif %}
+            </ul>
+            <ul class="navbar-nav ml-auto">
+                {% if user.is_authenticated %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        {{ user.email }}
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="{% url 'account_change_password' %}">Change Password</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="{% url 'account_change_password' %}">Settings</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="{% url 'all-download' %}">Reports</a> 
+                        {% if perms.mailserver.mailserver_view %}
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="{% url 'mail-server-home' %}">Email server details</a> 
+                        {% endif %}
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="{% url 'account_logout' %}">Logout</a>
+                    </div>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a href="{% url 'account_login' %}" class="nav-link"><i class="fas fa-sign-in-alt pr-2"></i>Sign In</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+</header>
+{% if messages %} {% for message in messages %}
+<div class="alert {{ message.tags }} alert-dismissible my-0" role="alert">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button> {{ message }}
+</div>
+{% endfor %} {% endif %} {% block main %} {% endblock main %} {% endblock body %}

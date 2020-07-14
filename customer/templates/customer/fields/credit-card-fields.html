@@ -1,0 +1,10 @@
+<div class="form-row">
+    <div class="form-group col-md-6">
+        <label for="credit-card">Credit card</label>
+        <input type="text" class="form-control" pattern="^[0-9]*$" id="credit-card" name="credit_card" placeholder="Enter credit card" value="{{credit_card.credit_card|default:''}}">
+    </div>
+    <div class="form-group col-md-6">
+        <label for="expires">Expires</label>
+        <input type="text" class="form-control" id="expires" name="expires" value="{{credit_card.expires|date:'m/Y'}}" placeholder="mm/yyyy" data-provide="datepicker" data-date-format="mm/yyyy" data-date-autoclose="true" data-date-view-mode="months" data-date-min-view-mode="months">
+    </div>
+</div>

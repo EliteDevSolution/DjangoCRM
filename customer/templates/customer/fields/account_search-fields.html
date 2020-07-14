@@ -1,0 +1,45 @@
+
+<div id="search-form" class="pb-3">
+    
+    <div class="form-row">
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
+            <form id="search_form" method="post" action="{% url 'global-search' %}">
+                {% csrf_token %}
+                <div class="form-group col-md-10" id="searchFormGroup">
+                    {% if search_value %}
+						<input type="text" class="form-control" id="current_tab" name="current_tab" value="{{ current_tab }}" hidden>
+                        <input type="text" class="form-control" id="search_value" name="search_value" value="{{search_value}}" placeholder="Enter...">
+						
+                    {% else %}
+						<input type="text" class="form-control" id="current_tab" name="current_tab" value="{{ current_tab }}" hidden>
+                        <input type="text" class="form-control" id="search_value" name="search_value" placeholder="Enter...">						
+                    {% endif %}
+    
+                </div>
+                    <button type="submit" id="btn-search" class="btn btn-primary">Search</button>				
+				</form>
+				
+				
+			</div>
+			<div class="col-md-2">
+			<form id="search_form" method="get" action="{% url 'account-add-customer' %}">
+					{% if not search_value and perms.customer.add_new_customer_via_account %}					
+					<button type="submit" id="add_customer" class="btn btn-primary">Add Customer</button>
+					{% endif %}
+			</form>
+			</div>
+                
+            
+        </div>
+
+        <div class="col-md-2">
+            <form id="search_clear_form" method="get" action="{% url 'account-list' %}">
+                {% csrf_token %}
+                {% if search_value %}
+                    <button type="submit" id="btn-search" class="btn btn-danger">Clear</button>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+</div>

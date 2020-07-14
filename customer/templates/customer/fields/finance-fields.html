@@ -1,0 +1,33 @@
+<div class="form-group col-6">
+    <h2 class="py-3">Finance</h2>
+<br>
+
+    <div class="row">
+		<div class="col-sm-8">
+			<div class="form-group">
+				<div class="col-sm-6 col-md-7">					
+					<select class="browser-default custom-select" id="finance" name="finance">
+					{% if requirement.finance == 'Yes' %}
+						  <option value="Choose">Choose</option>						  
+						  <option value="Yes" selected>Yes</option>
+						  <option value="No">No</option>
+					{% elif requirement.finance == 'No' %}
+						  <option value="Choose">Choose</option>						  
+						  <option value="Yes" >Yes</option>
+						  <option value="No" selected>No</option>
+					{% else %}
+						  <option value="Choose" selected>Choose</option>						  
+						  <option value="Yes" >Yes</option>
+						  <option value="No" selected>No</option>
+					{% endif %}
+					</select> 
+				</div>
+			</div>
+		</div>
+        <!--<label for="customer-check" class="col-sm-2 col-form-label ">Checked</label>
+        <div class="col-sm-10 pl-5">
+            <input class="form-check-input" type="checkbox" id="finance" name="finance" {% if requirement.finance %}
+                   checked {% endif %}>
+        </div>-->
+    </div>
+</div>
